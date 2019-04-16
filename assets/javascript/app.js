@@ -5,9 +5,18 @@ function quizSet() {
 		method: 'GET'
 	}).then(function (a) {
 		let quiz = [];
+		let shuffle = (array) => {
+			array.sort(() => Math.random() - 0.5);
+		}
 		for (var i in a.results) {
 			let options = a.results[i].incorrect_answers;
 			options.push(a.results[i].correct_answer);
+			shuffle(options);
+
+
+
+
+
 			let level = {
 				"question": a.results[i].question,
 				"correct": a.results[i].correct_answer,
@@ -37,20 +46,23 @@ function questionSet(a, b) {
 }
 
 function checkResponse(answer, solution) {
+	let correct = 0;
+	let incorrect = 0;
 	if (answer == solution) {
 		$('#' + solution).css('background-color', 'green');
-
+		correct++;
+		$('#correct').html("correct: " + correct)
 	}
 	if (answer !== solution) {
 		$('#' + solution).css('background-color', 'green');
+		incorrect++;
+		$('#incorrect').html("incorrect: " + incorrect)
 	}
 }
 
 function init(quiz) {
 	let quizIndex = 0;
 	let i = 10;
-	let correct = 0;
-	let incorrect = 0;
 	questionSet(quiz, quizIndex);
 	const timer = () => {
 		$('#clock').text(i);
@@ -58,6 +70,7 @@ function init(quiz) {
 		if (i < 0) {
 			clearInterval(stopWatch);
 			checkResponse("x", quiz[quizIndex]['correct']);
+			console.log("here");
 			i = 10;
 			quizIndex++;
 			if (quizIndex < 10) {
