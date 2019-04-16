@@ -12,11 +12,6 @@ function quizSet() {
 			let options = a.results[i].incorrect_answers;
 			options.push(a.results[i].correct_answer);
 			shuffle(options);
-
-
-
-
-
 			let level = {
 				"question": a.results[i].question,
 				"correct": a.results[i].correct_answer,
@@ -31,23 +26,25 @@ function quizSet() {
 
 function questionSet(a, b) {
 	$('#game').html('');
-	question = "<h1 class='question'>" + a[b]["question"] + "</h1>";
-	responses = a[b]["choices"];
+	$('#question_number').html("Question #: " + (quizIndex + 1));
+	let question = "<h1 class='question'>" + a[b]["question"] + "</h1>";
+	let responses = a[b]["choices"];
 	$('#game').append(question);
 	for (var i in responses) {
 		let div = $('<div>');
 		div.html(responses[i]);
 		div.attr('class', 'response');
-		div.attr('id', responses[i]);
+		div.attr('id', responses[i].replace(/[^a-zA-Z0-9]/g, ''));
 		$('#game').append(div);
 	}
 
 
 }
+let correct = 0;
+let incorrect = 0;
+let quizIndex = 0;
 
 function checkResponse(answer, solution) {
-	let correct = 0;
-	let incorrect = 0;
 	if (answer == solution) {
 		$('#' + solution).css('background-color', 'green');
 		correct++;
@@ -61,7 +58,9 @@ function checkResponse(answer, solution) {
 }
 
 function init(quiz) {
-	let quizIndex = 0;
+	quizIndex = 0;
+	correct = 0;
+	incorrect = 0;
 	let i = 10;
 	questionSet(quiz, quizIndex);
 	const timer = () => {
@@ -69,7 +68,7 @@ function init(quiz) {
 		i--;
 		if (i < 0) {
 			clearInterval(stopWatch);
-			checkResponse("x", quiz[quizIndex]['correct']);
+			checkResponse("x", "y");
 			console.log("here");
 			i = 10;
 			quizIndex++;
@@ -78,15 +77,17 @@ function init(quiz) {
 					stopWatch = setInterval(timer, 1000);
 					questionSet(quiz, quizIndex);
 				}, 2000);
-			} else {
-				finish();
+			}
+			if (quizIndex >= 10) {
+				alert('game over');
+				quizSet();
 			}
 		}
 	}
 	stopWatch = setInterval(timer, 1000);
 	$(document).on('click', '.response', function () {
 		clearInterval(stopWatch);
-		checkResponse($(this).text(), quiz[quizIndex]['correct']);
+		checkResponse($(this).attr('id'), quiz[quizIndex]['correct'].replace(/[^a-zA-Z0-9]/g, ''));
 		i = 10;
 		quizIndex++;
 		if (quizIndex < 10) {
@@ -94,18 +95,20 @@ function init(quiz) {
 				stopWatch = setInterval(timer, 1000);
 				questionSet(quiz, quizIndex);
 			}, 2000);
-		} else {
-			finish();
+		}
+		if (quizIndex >= 10) {
+			alert('game over');
+			quizSet();
 		}
 	})
 }
 
 
 function finish() {
+	alert('game over');
 
-
-	quizSet();
 }
+
 quizSet();
 
 
