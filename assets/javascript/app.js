@@ -75,8 +75,9 @@ function init(quiz) {
 			quizIndex++;
 			if (quizIndex < 10) {
 				endTimer = setTimeout(function () {
-					stopWatch = setInterval(timer, 1000);
 					questionSet(quiz, quizIndex);
+					stopWatch = setInterval(timer, 1000);
+
 				}, 2000);
 			}
 			if (quizIndex >= 10) {
@@ -89,18 +90,20 @@ function init(quiz) {
 	}
 	stopWatch = setInterval(timer, 1000);
 	$(document).on('click', '.response', function () {
+		clearInterval(stopWatch);
 		let answer = quiz[quizIndex]['correct'].replace(/[^a-zA-Z0-9]/g, '');
 		console.log(answer);
 		console.log($(this).attr('id'));
-		clearInterval(stopWatch);
 		checkResponse($(this).attr('id'), answer);
 		i = 10;
 		quizIndex++;
 		if (quizIndex < 10) {
 			endTimer = setTimeout(function () {
-				stopWatch = setInterval(timer, 1000);
 				questionSet(quiz, quizIndex);
+				stopWatch = setInterval(timer, 1000);
+
 			}, 2000);
+
 		}
 		if (quizIndex >= 10) {
 			clearInterval(stopWatch);
